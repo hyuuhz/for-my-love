@@ -2,120 +2,192 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <title>Ano Novo com Eva ✨</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Feliz Ano Novo, Eva ✨</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
     body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(180deg, #0f2027, #203a43, #2c5364);
+      background: radial-gradient(circle at top, #0b1a2e, #000);
       color: #fff;
       overflow: hidden;
     }
+
     .page {
       position: absolute;
       inset: 0;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
-      padding: 20px;
+      align-items: center;
       text-align: center;
+      padding: 20px;
       opacity: 0;
-      transform: scale(1.05);
-      transition: all 0.8s ease;
+      pointer-events: none;
+      transition: opacity 0.8s ease;
     }
+
     .page.active {
       opacity: 1;
-      transform: scale(1);
-      z-index: 2;
+      pointer-events: all;
     }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 16px;
-    }
-    p {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
+
+    h1 { font-size: 2.8rem; margin-bottom: 15px; }
+    h2 { font-size: 1.6rem; margin-bottom: 20px; font-weight: 400; }
+    p { font-size: 1.1rem; max-width: 600px; line-height: 1.6; }
+
     button {
-      background: #ff4d6d;
-      border: none;
-      color: white;
-      padding: 14px 28px;
+      margin-top: 30px;
+      padding: 14px 30px;
       border-radius: 30px;
+      border: none;
       font-size: 1rem;
       cursor: pointer;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      transition: transform .2s ease, background .2s ease;
-    }
-    button:hover { transform: scale(1.05); background: #ff6b81; }
-
-    img, video {
-      max-width: 90%;
-      border-radius: 20px;
-      margin: 20px 0;
+      background: linear-gradient(135deg, #ff4d6d, #ffb3c1);
+      color: #000;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .hearts::before {
-      content: '❤ ✨ ❤ ✨ ❤';
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 77, 109, 0.6);
+    }
+
+    /* Overlay de transição */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(120deg, #ff4d6d, #6c63ff);
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+    }
+
+    .overlay.show {
+      opacity: 1;
+    }
+
+    /* Corações flutuando */
+    .heart {
       position: absolute;
-      top: 20px;
-      animation: float 6s infinite linear;
-      opacity: .4;
-    }
-    @keyframes float {
-      from { transform: translateX(-100%); }
-      to { transform: translateX(100%); }
+      width: 12px;
+      height: 12px;
+      background: #ff4d6d;
+      transform: rotate(45deg);
+      animation: floatUp 6s linear infinite;
+      opacity: 0.7;
     }
 
-    @media (min-width: 768px) {
-      h1 { font-size: 2.5rem; }
-      p { font-size: 1.2rem; }
+    .heart::before,
+    .heart::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #ff4d6d;
+      border-radius: 50%;
+    }
+
+    .heart::before { top: -6px; left: 0; }
+    .heart::after { left: -6px; top: 0; }
+
+    @keyframes floatUp {
+      from { transform: translateY(100vh) rotate(45deg); }
+      to { transform: translateY(-10vh) rotate(45deg); }
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      font-size: 0.8rem;
+      opacity: 0.6;
     }
   </style>
 </head>
 <body>
 
-  <section class="page active hearts" id="p1">
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Página 1 -->
+  <section class="page active" id="page1">
     <h1>✨ Feliz Ano Novo, Eva ✨</h1>
-    <p>Que este novo ano seja o início de mais um capítulo lindo da nossa história.</p>
-    <button onclick="next(2)">Começar 💖</button>
+    <h2>Que 2026 comece do jeito mais lindo possível</h2>
+    <p>
+      Entre tantos desejos para o novo ano, o meu favorito é simples:
+      continuar vivendo momentos incríveis ao seu lado.
+    </p>
+    <button onclick="nextPage(1)">Começar ✨</button>
   </section>
 
-  <section class="page" id="p2">
-    <h1>Você é meu melhor ano</h1>
-    <img src="assets/foto1.jpg" alt="Eva" />
-    <p>Se eu pudesse escolher um desejo para este ano, seria continuar vivendo cada momento ao seu lado.</p>
-    <button onclick="next(3)">Continuar ✨</button>
+  <!-- Página 2 -->
+  <section class="page" id="page2">
+    <h1>💖 Um novo ano, nós 💖</h1>
+    <p>
+      Que cada mês traga mais risadas, cada semana mais carinho,
+      e cada dia mais certeza de que você é a melhor parte da minha vida.
+    </p>
+    <button onclick="nextPage(2)">Continuar 💫</button>
   </section>
 
-  <section class="page" id="p3">
-    <h1>Nossos Momentos</h1>
-    <video src="assets/video1.mp4" controls></video>
-    <p>Que venham mais risadas, mais abraços e infinitas memórias juntos.</p>
-    <button onclick="next(4)">Mais amor ❤️</button>
+  <!-- Página 3 -->
+  <section class="page" id="page3">
+    <h1>🎆 Promessas silenciosas 🎆</h1>
+    <p>
+      Prometo estar presente, cuidar de você,
+      comemorar suas conquistas e te apoiar nos dias difíceis.
+      Não só neste ano, mas em todos que vierem.
+    </p>
+    <button onclick="nextPage(3)">Mais um pouco ❤️</button>
   </section>
 
-  <section class="page" id="p4">
-    <h1>Promessa de Ano Novo</h1>
-    <img src="assets/foto2.jpg" alt="Nós" />
-    <p>Prometo te amar ainda mais forte este ano, cuidar de você e celebrar cada vitória juntos.</p>
-    <button onclick="next(5)">Final ✨</button>
+  <!-- Página 4 -->
+  <section class="page" id="page4">
+    <h1>🥂 Para o nosso futuro 🥂</h1>
+    <p>
+      Que 2026 seja apenas mais um capítulo
+      da nossa história — uma história que eu quero continuar escrevendo com você.
+    </p>
+    <button onclick="nextPage(4)">Mensagem final ✨</button>
   </section>
 
-  <section class="page" id="p5">
-    <h1>Com amor, para sempre 💍</h1>
-    <video src="assets/video2.mp4" controls></video>
-    <p>Eva, você é meu hoje, meu amanhã e todos os anos que ainda virão. Feliz Ano Novo, meu amor. ❤️✨</p>
+  <!-- Página 5 -->
+  <section class="page" id="page5">
+    <h1>❤️ Eva ❤️</h1>
+    <p>
+      Obrigado por existir, por ser quem você é
+      e por fazer meu mundo melhor.
+      Feliz Ano Novo, meu amor.
+    </p>
+    <footer>Feito com carinho, só para você ✨</footer>
   </section>
 
   <script>
-    function next(n) {
-      document.querySelector('.page.active').classList.remove('active');
-      document.getElementById('p' + n).classList.add('active');
+    let currentPage = 1;
+
+    function nextPage(page) {
+      const overlay = document.getElementById('overlay');
+      overlay.classList.add('show');
+
+      setTimeout(() => {
+        document.getElementById('page' + page).classList.remove('active');
+        currentPage = page + 1;
+        document.getElementById('page' + currentPage).classList.add('active');
+        overlay.classList.remove('show');
+      }, 600);
     }
+
+    // Corações animados
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = 4 + Math.random() * 4 + 's';
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 8000);
+    }
+
+    setInterval(createHeart, 500);
   </script>
 
 </body>
