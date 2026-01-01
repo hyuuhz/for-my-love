@@ -16,17 +16,17 @@
     .page {
       position: absolute;
       inset: 0;
-      display: flex;
+      display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 20px;
       text-align: center;
-      opacity: 0;
-      transform: scale(1.05);
-      transition: all 0.8s ease;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
     }
     .page.active {
+      display: flex;
       opacity: 1;
       transform: scale(1);
       z-index: 2;
@@ -57,7 +57,7 @@
       transition: transform .2s ease, box-shadow .2s ease;
     }
     }
-    button:hover { transform: scale(1.08); box-shadow: 0 0 40px rgba(199,125,255,
+    button:hover { transform: scale(1.08); box-shadow: 0 0 40px rgba(199,125,255,0.9); }
 
     img, video {
       max-width: 90%;
@@ -120,9 +120,10 @@
 
   <script>
     function next(n) {
-      document.querySelector('.page.active').classList.remove('active');
-      document.getElementById('p' + n).classList.add('active');
-    }
+      const pages = document.querySelectorAll('.page');
+      pages.forEach(p => p.classList.remove('active'));
+      const target = document.getElementById('p' + n);
+      if (target) target.classList.add('active'
   </script>
 
 </body>
