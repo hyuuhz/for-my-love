@@ -8,25 +8,24 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Poppins', sans-serif;
-      background: radial-gradient(circle at top, #2b1055, #0b0f2b 70%, #05010f);
-      color: #e0d7ff;
+      background: linear-gradient(180deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
       overflow: hidden;
-    }
     }
     .page {
       position: absolute;
       inset: 0;
-      display: none;
+      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 20px;
       text-align: center;
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
+      opacity: 0;
+      transform: scale(1.05);
+      transition: all 0.8s ease;
     }
     .page.active {
-      display: flex;
       opacity: 1;
       transform: scale(1);
       z-index: 2;
@@ -34,30 +33,24 @@
     h1 {
       font-size: 2rem;
       margin-bottom: 16px;
-      color: #c77dff;
-      text-shadow: 0 0 15px rgba(199,125,255,0.6);
-    }
     }
     p {
       font-size: 1.1rem;
       line-height: 1.6;
       margin-bottom: 20px;
-      color: #e6e1ff;
-    }
     }
     button {
-      background: linear-gradient(135deg, #9d4edd, #5a189a);
+      background: #ff4d6d;
       border: none;
-      color: #fff;
+      color: white;
       padding: 14px 28px;
       border-radius: 30px;
       font-size: 1rem;
       cursor: pointer;
-      box-shadow: 0 0 30px rgba(157,78,221,0.6);
-      transition: transform .2s ease, box-shadow .2s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: transform .2s ease, background .2s ease;
     }
-    }
-    button:hover { transform: scale(1.08); box-shadow: 0 0 40px rgba(199,125,255,0.9); }
+    button:hover { transform: scale(1.05); background: #ff6b81; }
 
     img, video {
       max-width: 90%;
@@ -120,10 +113,9 @@
 
   <script>
     function next(n) {
-      const pages = document.querySelectorAll('.page');
-      pages.forEach(p => p.classList.remove('active'));
-      const target = document.getElementById('p' + n);
-      if (target) target.classList.add('active'
+      document.querySelector('.page.active').classList.remove('active');
+      document.getElementById('p' + n).classList.add('active');
+    }
   </script>
 
 </body>
