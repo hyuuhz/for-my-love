@@ -1,153 +1,188 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Feliz Ano Novo, Eva ✨</title>
+<meta charset="UTF-8">
+<title>Mini Game do Amor 💖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(180deg, #0f2027, #203a43, #2c5364);
-      color: #ffffff;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .page {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      text-align: center;
-      opacity: 0;
-      transform: scale(1.05);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-
-    .page.active {
-      opacity: 1;
-      transform: scale(1);
-      z-index: 2;
-    }
-
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 16px;
-    }
-
-    p {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-
-    button {
-      background: #ff4d6d;
-      border: none;
-      color: white;
-      padding: 14px 28px;
-      border-radius: 30px;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      transition: transform .2s ease, background .2s ease;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-      background: #ff6b81;
-    }
-
-    img, video {
-      max-width: 90%;
-      border-radius: 20px;
-      margin: 20px 0;
-    }
-
-    .hearts {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hearts::before {
-      content: '❤ ✨ ❤ ✨ ❤';
-      position: absolute;
-      top: 20px;
-      left: -100%;
-      font-size: 1.5rem;
-      animation: float 8s infinite linear;
-      opacity: .5;
-      white-space: nowrap;
-    }
-
-    @keyframes float {
-      from { transform: translateX(0); }
-      to { transform: translateX(200vw); }
-    }
-
-    @media (min-width: 768px) {
-      h1 { font-size: 2.5rem; }
-      p { font-size: 1.2rem; }
-    }
-  </style>
+<style>
+html,body{margin:0;padding:0;background:#000;overflow:hidden;touch-action:none}
+canvas{display:block;background:#111}
+.joystick{position:absolute;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.1)}
+.stick{position:absolute;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.4);left:35px;top:35px}
+#joyLeft{left:20px;bottom:20px}
+#joyRight{right:20px;bottom:20px}
+</style>
 </head>
 
 <body>
 
-  <section class="page active hearts" id="p1">
-    <h1>✨ Feliz Ano Novo, Eva ✨</h1>
-    <p>Que este novo ano seja o início de mais um capítulo lindo da nossa história.</p>
-    <button onclick="next(2)">Começar 💖</button>
-  </section>
+<canvas id="game"></canvas>
 
-  <section class="page" id="p2">
-    <h1>Você é meu melhor ano</h1>
-    <img src="assets/foto1.jpg" alt="Eva" />
-    <p>Se eu pudesse escolher um desejo para este ano, seria continuar vivendo cada momento ao seu lado.</p>
-    <button onclick="next(3)">Continuar ✨</button>
-  </section>
+<div id="joyLeft" class="joystick"><div class="stick"></div></div>
+<div id="joyRight" class="joystick"><div class="stick"></div></div>
 
-  <section class="page" id="p3">
-    <h1>Nossos Momentos</h1>
-    <video src="assets/video1.mp4" controls></video>
-    <p>Que venham mais risadas, mais abraços e infinitas memórias juntos.</p>
-    <button onclick="next(4)">Mais amor ❤️</button>
-  </section>
+<audio id="music" src="music.mp3" loop></audio>
 
-  <section class="page" id="p4">
-    <h1>Promessa de Ano Novo</h1>
-    <img src="assets/foto2.jpg" alt="Nós" />
-    <p>Prometo te amar ainda mais forte este ano, cuidar de você e celebrar cada vitória juntos.</p>
-    <button onclick="next(5)">Final ✨</button>
-  </section>
+<script>
+/* ===== CANVAS ===== */
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize(); addEventListener("resize",resize);
 
-  <section class="page" id="p5">
-    <h1>Com amor, para sempre 💍</h1>
-    <video src="assets/video2.mp4" controls></video>
-    <p>Eva, você é meu hoje, meu amanhã e todos os anos que ainda virão. Feliz Ano Novo, meu amor. ❤️✨</p>
-  </section>
+const TILE=48, FRAME=32;
 
-  <script>
-    function next(n) {
-      document.querySelector('.page.active').classList.remove('active');
-      document.getElementById('p' + n).classList.add('active');
-    }
-  </script>
+/* ===== MAPA (LABIRINTO) ===== */
+const map=[
+[1,1,1,1,1,1,1,1,1,1,1,1],
+[1,0,0,0,0,0,1,0,0,0,0,1],
+[1,0,1,1,1,0,1,0,1,1,0,1],
+[1,0,0,0,1,0,0,0,0,1,0,1],
+[1,1,1,0,1,1,1,1,0,1,0,1],
+[1,0,0,0,0,0,0,1,0,0,0,1],
+[1,0,1,1,1,1,0,1,1,1,0,1],
+[1,0,0,0,0,0,0,0,0,0,0,1],
+[1,1,1,1,1,1,1,1,1,1,1,1]
+];
 
-</body>
-</html>
+function drawMap(){
+for(let y=0;y<map.length;y++)
+for(let x=0;x<map[y].length;x++)
+if(map[y][x]===1){
+ctx.fillStyle="#333";
+ctx.fillRect(x*TILE,y*TILE,TILE,TILE);
+}
+}
+
+/* ===== LOAD ===== */
+function load(src,f){let i=new Image();i.src=src;return{img:i,frames:f}}
+
+const cat={
+ idle:load("sprites/cat_idle.png",5),
+ move:load("sprites/cat_move.png",8),
+ shooting:load("sprites/cat_shooting.png",13),
+ reload:load("sprites/cat_reload.png",41),
+ hurt:load("sprites/cat_hurt.png",4),
+ noammo:load("sprites/cat_noammo.png",5)
+};
+
+const enemyAnim={
+ idle:load("sprites/enemy_idle.png",4),
+ attack:load("sprites/enemy_attack.png",8),
+ hurt:load("sprites/enemy_hurt.png",4),
+ death:load("sprites/enemy_death.png",6)
+};
+
+const bulletImg=new Image(); bulletImg.src="sprites/hero_bullet.png";
+const heartImg=new Image(); heartImg.src="sprites/heart.png";
+
+/* ===== PLAYER ===== */
+const player={
+ x:2,y:2,px:96,py:96,
+ state:"idle",frame:0,delay:0,
+ hp:10,maxHp:10,
+ ammo:10,maxAmmo:10,
+ dirX:1,dirY:0
+};
+
+/* ===== ENEMY ===== */
+const enemy={
+ x:8,y:5,px:384,py:240,
+ hp:5,alive:true,
+ state:"idle",frame:0,delay:0
+};
+
+/* ===== ITENS VIDA ===== */
+let hearts=[{x:5,y:1},{x:9,y:7}];
+
+/* ===== BULLETS ===== */
+let bullets=[];
+
+/* ===== ANIMATE ===== */
+function animate(e,set,s=6){
+ let a=set[e.state]; e.delay++;
+ if(e.delay>s){e.frame=(e.frame+1)%a.frames;e.delay=0}
+}
+
+function draw(e,set){
+ let a=set[e.state];
+ ctx.drawImage(a.img,e.frame*FRAME,0,FRAME,FRAME,e.px,e.py,TILE,TILE);
+}
+
+/* ===== SHOOT ===== */
+function shoot(){
+ if(player.ammo<=0){player.state="noammo";return}
+ player.ammo--; player.state="shooting";
+ bullets.push({x:player.px+24,y:player.py+24,dx:player.dirX*8,dy:player.dirY*8});
+}
+
+/* ===== HUD ===== */
+function hud(){
+ ctx.fillStyle="red";
+ ctx.fillRect(20,20,200*(player.hp/player.maxHp),12);
+ ctx.strokeStyle="#fff"; ctx.strokeRect(20,20,200,12);
+
+ ctx.fillStyle="yellow";
+ ctx.fillRect(20,40,200*(player.ammo/player.maxAmmo),10);
+ ctx.strokeRect(20,40,200,10);
+}
+
+/* ===== JOYSTICK ===== */
+let move={x:0,y:0};
+function joystick(el,cb){
+ let s=el.querySelector(".stick"),a=false;
+ el.ontouchstart=()=>a=true;
+ el.ontouchend=()=>{a=false;s.style.left="35px";s.style.top="35px";cb(0,0)};
+ el.ontouchmove=e=>{
+ if(!a)return;
+ let r=el.getBoundingClientRect();
+ let x=e.touches[0].clientX-r.left-60;
+ let y=e.touches[0].clientY-r.top-60;
+ x=Math.max(-40,Math.min(40,x));
+ y=Math.max(-40,Math.min(40,y));
+ s.style.left=x+35+"px"; s.style.top=y+35+"px";
+ cb(x/40,y/40);
+ };
+}
+
+joystick(joyLeft,(x,y)=>{move.x=x;move.y=y});
+joystick(joyRight,(x,y)=>{
+ if(Math.abs(x)+Math.abs(y)>0.5){player.dirX=x;player.dirY=y;shoot()}
+});
+
+/* ===== LOOP ===== */
+function loop(){
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ drawMap();
+
+ // PLAYER MOVE
+ if(Math.abs(move.x)+Math.abs(move.y)>0.1){
+ player.px+=move.x*3; player.py+=move.y*3;
+ player.state="move"; player.dirX=move.x; player.dirY=move.y;
+ } else player.state="idle";
+
+ animate(player,cat); draw(player,cat);
+
+ // ENEMY
+ if(enemy.alive){
+ animate(enemy,enemyAnim);
+ draw(enemy,enemyAnim);
+ }
+
+ // BULLETS
+ bullets.forEach((b,i)=>{
+ b.x+=b.dx; b.y+=b.dy;
+ ctx.drawImage(bulletImg,b.x,b.y,16,16);
+ if(enemy.alive && Math.abs(b.x-enemy.px)<40 && Math.abs(b.y-enemy.py)<40){
+ enemy.hp--; bullets.splice(i,1); enemy.state="hurt";
+ if(enemy.hp<=0){enemy.alive=false;enemy.state="death"}
+ }
+ });
+
+ // HEARTS
+ hearts.forEach((h,i)=>{
+ ctx.drawImage(heartImg,h.x*TILE,h.y*TILE,32,32);
+ if(Math.abs(player.px-h.x*TILE)<32 && Math.abs(player.py-h.y*TILE)<32){
+ player.hp=Math.min(player.maxHp,player.hp+1);
+ hearts.splice
